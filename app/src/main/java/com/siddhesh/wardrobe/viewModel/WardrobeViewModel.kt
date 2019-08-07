@@ -17,7 +17,6 @@ class WardrobeViewModel(application: Application) : AndroidViewModel(application
         val movieDao: WardrobeRoomDB = WardrobeRoomDB.getAppDatabase(application) as WardrobeRoomDB
         repository = ClothRepository(movieDao.daoAccess())
 
-
     }
 
     fun addTop(topModel: TopModel) {

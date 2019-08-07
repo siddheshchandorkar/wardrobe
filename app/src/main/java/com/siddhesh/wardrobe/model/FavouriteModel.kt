@@ -15,8 +15,14 @@ class FavouriteModel:BaseModel() {
     var favId: Int = 0
 
     @ColumnInfo(name = "t_id" )
-    var topId: String = ""
+    var topId: Int = 0
 
     @ColumnInfo(name = "j_id" )
-    var jeansId: String = ""
+    var jeansId: Int = 0
+
+    override fun toString(): String {
+        return "FavouriteModel(favId=$favId, topId=$topId, jeansId=$jeansId)"
+    }
+
+
 }

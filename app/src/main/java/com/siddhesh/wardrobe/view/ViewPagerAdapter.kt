@@ -1,8 +1,8 @@
 package com.siddhesh.wardrobe.view
 
 import android.content.Context
+import android.net.Uri
 import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +10,15 @@ import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import com.siddhesh.wardrobe.R
 import com.siddhesh.wardrobe.model.BaseModel
-import kotlinx.android.synthetic.main.item_view_pager.view.*
+import com.siddhesh.wardrobe.model.JeansModel
+import com.siddhesh.wardrobe.model.TopModel
 
 
-class ViewPagerAdapter(private val context: Context, private val clothAl: List<BaseModel>) : PagerAdapter() {
+class ViewPagerAdapter(
+    private val context: Context,
+    private val clothAl: List<BaseModel>,
+    private val check: Int
+) : PagerAdapter() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -22,7 +27,6 @@ class ViewPagerAdapter(private val context: Context, private val clothAl: List<B
 
     override fun getCount(): Int {
 //        return imageModelArrayList.size
-
 
 
         return clothAl.size
@@ -35,9 +39,15 @@ class ViewPagerAdapter(private val context: Context, private val clothAl: List<B
 
         val ivPackages = layout.findViewById(R.id.iv_cloth) as ImageView
 
+        if (check == 0) {
+            ivPackages.setImageURI(Uri.parse((clothAl.get(position) as TopModel).image_path))
+
+        } else
+            ivPackages.setImageURI(Uri.parse((clothAl.get(position) as JeansModel).image_path))
 
 
-       view.addView(layout)
+
+        view.addView(layout)
         return layout
     }
 

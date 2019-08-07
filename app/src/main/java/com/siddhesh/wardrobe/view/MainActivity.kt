@@ -3,7 +3,9 @@ package com.siddhesh.wardrobe.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.telephony.AccessNetworkConstants
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: com.siddhesh.wardrobe.databinding.ActivityMainBinding
     private lateinit var topPagerAdapter: ViewPagerAdapter
     private lateinit var jeansPagerAdapter: ViewPagerAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +55,26 @@ class MainActivity : AppCompatActivity() {
         alJeans = wardrobeViewModel.getJeans()
         alFavCombo = wardrobeViewModel.getFavCombo()
 
+        if (alTops != null && alTops.isEmpty()) {
+            binding.tvTopMsg.visibility = View.VISIBLE
+        } else
+            binding.tvTopMsg.visibility = View.GONE
 
-        topPagerAdapter = ViewPagerAdapter(this, alTops)
+        if (alJeans != null && alJeans.isEmpty()) {
+            binding.tvJeansMsg.visibility = View.VISIBLE
+        } else
+            binding.tvJeansMsg.visibility = View.GONE
+
+        Log.d("Siddhesh", "Init fav: "+alFavCombo)
+
+        topPagerAdapter = ViewPagerAdapter(this, alTops, 0)
 
         binding.vpTop.adapter = topPagerAdapter
         binding.vpTop.setPageTransformer(true, PageTransformer())
         topPagerAdapter.notifyDataSetChanged()
 
 
-        jeansPagerAdapter = ViewPagerAdapter(this, alJeans)
+        jeansPagerAdapter = ViewPagerAdapter(this, alJeans, 1)
 
         binding.vpJeans.adapter = jeansPagerAdapter
         jeansPagerAdapter.notifyDataSetChanged()
@@ -68,13 +82,25 @@ class MainActivity : AppCompatActivity() {
 
         binding.fabTop.setOnClickListener {
 
-            clothType=true
-             onSelectImageClick() }
+            clothType = true
+            onSelectImageClick()
+        }
         binding.fabJeans.setOnClickListener {
-            clothType=false
+            clothType = false
 
-            onSelectImageClick() }
+            onSelectImageClick()
+        }
 
+
+        binding.ivFav.setOnClickListener {
+            var favouriteModel= FavouriteModel()
+            favouriteModel.topId =alTops.get(binding.vpTop.currentItem).topId
+            favouriteModel.jeansId =alJeans.get(binding.vpTop.currentItem).jeansId
+
+            wardrobeViewModel.selectFavCombo(favouriteModel)
+
+
+        }
 
     }
 
@@ -105,20 +131,34 @@ class MainActivity : AppCompatActivity() {
                     var topModel = TopModel()
                     topModel.image_path = result.uri.toString()
 
-                    (wardrobeViewModel to this).first.addTop(topModel)
+                    wardrobeViewModel.addTop(topModel)
 
 
-                    alTops =wardrobeViewModel.getTops()
+                    alTops = wardrobeViewModel.getTops()
                     topPagerAdapter.notifyDataSetChanged()
+
+                    if (alTops != null && alTops.isEmpty()) {
+                        binding.tvTopMsg.visibility = View.VISIBLE
+                    } else
+                        binding.tvTopMsg.visibility = View.GONE
+
+
 
                 } else {
                     var jeansModel = JeansModel()
                     jeansModel.image_path = result.uri.toString()
 
-                    (wardrobeViewModel to this).first.addJeans(jeansModel)
+                    wardrobeViewModel.addJeans(jeansModel)
 
-                    alJeans =wardrobeViewModel.getJeans()
+                    alJeans = wardrobeViewModel.getJeans()
                     jeansPagerAdapter.notifyDataSetChanged()
+
+                    if (alJeans != null && alJeans.isEmpty()) {
+                        binding.tvJeansMsg.visibility = View.VISIBLE
+                    } else
+                        binding.tvJeansMsg.visibility = View.GONE
+
+
 
                 }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {

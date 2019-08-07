@@ -24,12 +24,13 @@
                     android:layout_height="0dp"
 
 
-
                     android:layout_weight="1"
-                    />
+            />
 
 
-            <ImageView android:layout_width="40dp"
+            <ImageView
+                    android:id="@+id/iv_fav"
+                    android:layout_width="40dp"
                        android:layout_height="40dp"
                        android:layout_marginTop="-20dp"
                        android:layout_marginEnd="20dp"
@@ -37,7 +38,17 @@
                        android:layout_gravity="end"
 
                        android:elevation="3dp"
-                       app:srcCompat="@drawable/ic_selected_fav"/>
+                       app:srcCompat="@drawable/ic_unselected_fav"/>
+
+            <ImageView android:layout_width="40dp"
+                       android:layout_height="40dp"
+                       android:layout_marginTop="-40dp"
+                       android:layout_marginEnd="20dp"
+                       android:layout_marginRight="20dp"
+                       android:layout_gravity="center_horizontal"
+
+                       android:elevation="3dp"
+                       app:srcCompat="@drawable/ic_shuffle"/>
 
             <androidx.viewpager.widget.ViewPager
                     android:id="@+id/vp_jeans"
@@ -47,7 +58,7 @@
 
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    />
+            />
 
 
         </LinearLayout>
@@ -60,7 +71,7 @@
                 android:layout_marginTop="30dp"
 
                 android:text="You Can Add Top's image by clicking here"
-        android:layout_toLeftOf="@id/fab_top"/>
+                android:layout_toLeftOf="@id/fab_top"/>
 
         <TextView
                 android:id="@+id/tv_jeans_msg"
