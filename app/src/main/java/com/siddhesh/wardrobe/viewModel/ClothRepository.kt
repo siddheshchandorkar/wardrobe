@@ -1,5 +1,6 @@
 package com.siddhesh.wardrobe.viewModel
 
+import android.util.Log
 import com.siddhesh.wardrobe.model.FavouriteModel
 import com.siddhesh.wardrobe.model.JeansModel
 import com.siddhesh.wardrobe.model.TopModel
@@ -23,11 +24,24 @@ class ClothRepository(private var daoAccess: DaoAccess) {
     }
 
     fun insertFavourite(favouriteModel: FavouriteModel): Boolean {
-        if(daoAccess.checkFavCombo(favouriteModel.topId, favouriteModel.jeansId)>0){
+        Log.d("Siddhesh","check insertFavourite: "+favouriteModel)
+        if(daoAccess.checkFavCombo(favouriteModel.topId, favouriteModel.jeansId)==0){
             daoAccess.insertFav(favouriteModel)
             return true
         }else
             return false
+
+    }
+
+    fun checkFavCombo(tId: Int , jId:Int): Boolean {
+
+        if(daoAccess.checkFavCombo(tId, jId)>0){
+            return true
+        }else
+        {
+            return false
+        }
+
 
     }
 

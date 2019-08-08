@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.siddhesh.wardrobe.R
@@ -57,13 +58,48 @@ class MainActivity : AppCompatActivity() {
 
         if (alTops != null && alTops.isEmpty()) {
             binding.tvTopMsg.visibility = View.VISIBLE
-        } else
+            binding.ivLeftTop.visibility = View.GONE
+            binding.ivRightTop.visibility = View.GONE
+        } else {
             binding.tvTopMsg.visibility = View.GONE
+            binding.ivLeftTop.visibility = View.VISIBLE
+            binding.ivRightTop.visibility = View.VISIBLE
+
+        }
 
         if (alJeans != null && alJeans.isEmpty()) {
             binding.tvJeansMsg.visibility = View.VISIBLE
-        } else
+            binding.ivLeftJeans.visibility = View.GONE
+            binding.ivRightJeans.visibility = View.GONE
+        } else {
             binding.tvJeansMsg.visibility = View.GONE
+
+            binding.ivLeftJeans.visibility = View.VISIBLE
+            binding.ivRightJeans.visibility = View.VISIBLE
+        }
+
+
+        if (alTops != null && !alTops.isEmpty() && alJeans != null && !alJeans.isEmpty()) {
+            binding.ivFav.visibility = View.VISIBLE
+            binding.ivShuffle.visibility = View.VISIBLE
+
+            if (wardrobeViewModel.checkFavCombo(alTops[0].topId, alJeans[0].jeansId)) {
+                binding.ivFav.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_selected_fav))
+            } else {
+                binding.ivFav.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this@MainActivity,
+                        R.drawable.ic_unselected_fav
+                    )
+                )
+
+            }
+        } else {
+            binding.ivFav.visibility = View.GONE
+            binding.ivShuffle.visibility = View.GONE
+        }
+
+
 
         Log.d("Siddhesh", "Init fav: " + alFavCombo)
 
@@ -82,6 +118,8 @@ class MainActivity : AppCompatActivity() {
         jeansPagerAdapter.notifyDataSetChanged()
 
 
+
+
         binding.fabTop.setOnClickListener {
 
             clothType = true
@@ -94,25 +132,34 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.ivLeftTop.setOnClickListener {
-            if(binding.vpTop.currentItem>0){
-                binding.vpTop.setCurrentItem(binding.vpTop.currentItem-1, true)
+            if (binding.vpTop.currentItem > 0) {
+                binding.vpTop.setCurrentItem(binding.vpTop.currentItem - 1, true)
             }
-
 
 
         }
         binding.ivRightTop.setOnClickListener {
-
+            if (binding.vpTop.currentItem < alTops.size - 1) {
+                binding.vpTop.setCurrentItem(binding.vpTop.currentItem + 1, true)
+            }
 
 
         }
         binding.ivLeftJeans.setOnClickListener {
-
+            if (binding.vpJeans.currentItem > 0) {
+                binding.vpJeans.setCurrentItem(binding.vpJeans.currentItem - 1, true)
+            }
 
 
         }
         binding.ivRightJeans.setOnClickListener {
+            if (binding.vpJeans.currentItem < alTops.size - 1) {
+                binding.vpJeans.setCurrentItem(binding.vpJeans.currentItem + 1, true)
+            }
+        }
 
+
+        binding.ivShuffle.setOnClickListener {
 
 
         }
@@ -123,6 +170,31 @@ class MainActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 Log.d("Siddhesh", "Check Top scroll: " + position + " " + binding.vpJeans.currentItem)
 
+
+                if (alTops != null && !alTops.isEmpty() && alJeans != null && !alJeans.isEmpty()) {
+                    if (wardrobeViewModel.checkFavCombo(
+                            alTops[position].topId,
+                            alJeans[binding.vpJeans.currentItem].jeansId
+                        )
+                    ) {
+                        binding.ivFav.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                this@MainActivity,
+                                R.drawable.ic_selected_fav
+                            )
+                        )
+                    } else {
+                        binding.ivFav.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                this@MainActivity,
+                                R.drawable.ic_unselected_fav
+                            )
+                        )
+
+                    }
+                }
+
+
             }
 
             override fun onPageScrolled(pos: Int, arg1: Float, arg2: Int) {}
@@ -131,7 +203,29 @@ class MainActivity : AppCompatActivity() {
         })
         binding.vpJeans.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageSelected(position: Int) {
-                Log.d("Siddhesh", "Check Jeans scroll: " + position + " " + binding.vpTop.currentItem)
+
+                if (alTops != null && !alTops.isEmpty() && alJeans != null && !alJeans.isEmpty()) {
+                    if (wardrobeViewModel.checkFavCombo(
+                            alTops[binding.vpTop.currentItem].topId,
+                            alJeans[position].jeansId
+                        )
+                    ) {
+                        binding.ivFav.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                this@MainActivity,
+                                R.drawable.ic_selected_fav
+                            )
+                        )
+                    } else {
+                        binding.ivFav.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                this@MainActivity,
+                                R.drawable.ic_unselected_fav
+                            )
+                        )
+
+                    }
+                }
 
             }
 
@@ -142,11 +236,12 @@ class MainActivity : AppCompatActivity() {
         binding.ivFav.setOnClickListener {
             val favouriteModel = FavouriteModel()
             favouriteModel.topId = alTops.get(binding.vpTop.currentItem).topId
-            favouriteModel.jeansId = alJeans.get(binding.vpTop.currentItem).jeansId
+            favouriteModel.jeansId = alJeans.get(binding.vpJeans.currentItem).jeansId
 
 
 
             if (wardrobeViewModel.selectFavCombo(favouriteModel)) {
+                binding.ivFav.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_selected_fav))
 
             } else
                 Toast.makeText(
@@ -190,13 +285,23 @@ class MainActivity : AppCompatActivity() {
                     wardrobeViewModel.addTop(topModel)
 
 
-                    alTops = wardrobeViewModel.getTops()
+                    alTops.clear()
+                    alTops.addAll(wardrobeViewModel.getTops())
                     topPagerAdapter.notifyDataSetChanged()
+
+
+                    binding.vpTop.setCurrentItem(alTops.size - 1, true)
 
                     if (alTops != null && alTops.isEmpty()) {
                         binding.tvTopMsg.visibility = View.VISIBLE
-                    } else
+                        binding.ivLeftTop.visibility = View.GONE
+                        binding.ivRightTop.visibility = View.GONE
+                    } else {
                         binding.tvTopMsg.visibility = View.GONE
+                        binding.ivLeftTop.visibility = View.VISIBLE
+                        binding.ivRightTop.visibility = View.VISIBLE
+
+                    }
 
 
                 } else {
@@ -205,16 +310,33 @@ class MainActivity : AppCompatActivity() {
 
                     wardrobeViewModel.addJeans(jeansModel)
 
-                    alJeans = wardrobeViewModel.getJeans()
+                    alJeans.clear()
+                    alJeans.addAll(wardrobeViewModel.getJeans())
                     jeansPagerAdapter.notifyDataSetChanged()
+
+                    binding.vpJeans.setCurrentItem(alJeans.size - 1, true)
 
                     if (alJeans != null && alJeans.isEmpty()) {
                         binding.tvJeansMsg.visibility = View.VISIBLE
-                    } else
+                        binding.ivLeftJeans.visibility = View.GONE
+                        binding.ivRightJeans.visibility = View.GONE
+                    } else {
                         binding.tvJeansMsg.visibility = View.GONE
+
+                        binding.ivLeftJeans.visibility = View.VISIBLE
+                        binding.ivRightJeans.visibility = View.VISIBLE
+                    }
 
 
                 }
+                if (alTops != null && !alTops.isEmpty() && alJeans != null && !alJeans.isEmpty()) {
+                    binding.ivFav.visibility = View.VISIBLE
+                    binding.ivShuffle.visibility = View.VISIBLE
+                } else {
+                    binding.ivFav.visibility = View.GONE
+                    binding.ivShuffle.visibility = View.GONE
+                }
+
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Toast.makeText(this, "Cropping failed: " + result.error, Toast.LENGTH_LONG).show()
             }

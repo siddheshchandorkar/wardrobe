@@ -27,20 +27,25 @@ class WardrobeViewModel(application: Application) : AndroidViewModel(application
         repository.insertJeans(jeansModel)
     }
 
-    fun selectFavCombo(favouriteModel: FavouriteModel) :Boolean{
+    fun selectFavCombo(favouriteModel: FavouriteModel): Boolean {
 
-       return repository.insertFavourite(favouriteModel)
+        return repository.insertFavourite(favouriteModel)
+    }
+
+    fun checkFavCombo(tId: Int, jId: Int): Boolean {
+
+        return repository.checkFavCombo(tId, jId)
     }
 
     fun getTops(): ArrayList<TopModel> {
         return repository.getAllTops()
     }
 
-    fun getJeans() :ArrayList<JeansModel>{
+    fun getJeans(): ArrayList<JeansModel> {
         return repository.getAllJeans()
     }
 
-    fun getFavCombo() :ArrayList<FavouriteModel>{
+    fun getFavCombo(): ArrayList<FavouriteModel> {
 
         return repository.getAllFav()
     }

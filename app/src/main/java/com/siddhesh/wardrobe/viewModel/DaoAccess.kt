@@ -20,7 +20,6 @@ interface DaoAccess {
     @Insert
     fun insertFav(favouriteModel: FavouriteModel): Long
 
-
     @Query("SELECT * FROM top ")
     fun fetchAllTops(): List<TopModel>
 

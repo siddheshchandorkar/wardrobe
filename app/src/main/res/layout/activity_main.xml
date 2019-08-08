@@ -12,6 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
+            android:background="@drawable/gradient_bg"
             tools:context=".view.MainActivity">
 
         <LinearLayout
@@ -41,6 +42,8 @@
                         android:id="@+id/vp_top"
                         android:layout_width="0dp"
                         android:layout_weight="1"
+                        android:background="@android:color/white"
+
                         android:layout_height="match_parent"
 
                 />
@@ -81,6 +84,7 @@
                         android:id="@+id/vp_jeans"
                         android:layout_width="0dp"
 
+                        android:background="@android:color/white"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
 
@@ -99,16 +103,18 @@
 
         </LinearLayout>
 
-        <ImageView android:layout_width="45dp"
-                   android:layout_height="45dp"
-                   android:layout_centerInParent="true"
-                   android:padding="5dp"
-                   android:clickable="true"
-                   android:focusable="true"
+        <ImageView
+                android:id="@+id/iv_shuffle"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerInParent="true"
+                android:padding="5dp"
+                android:clickable="true"
+                android:focusable="true"
 
-                   android:background="@drawable/riple_effect"
-                   android:elevation="3dp"
-                   app:srcCompat="@drawable/ic_shuffle"/>
+                android:background="@drawable/riple_effect"
+                android:elevation="3dp"
+                app:srcCompat="@drawable/ic_shuffle"/>
 
 
         <ImageView
