@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -17,6 +18,11 @@ import com.siddhesh.wardrobe.model.TopModel
 import com.siddhesh.wardrobe.viewModel.WardrobeViewModel
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+
+import java.util.*
+import kotlin.collections.ArrayList
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,10 +42,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-
-//        setContentView(R.layout.activity_main)
-
 
         initializations()
 
@@ -83,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             binding.ivFav.visibility = View.VISIBLE
             binding.ivShuffle.visibility = View.VISIBLE
 
-            if (wardrobeViewModel.checkFavCombo(alTops[0].topId, alJeans[0].jeansId)) {
+            if (wardrobeViewModel.checkFavCombo(alTops[0].topId, alJeans[0].jeansId)>0) {
                 binding.ivFav.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_selected_fav))
             } else {
                 binding.ivFav.setImageDrawable(
@@ -162,25 +164,33 @@ class MainActivity : AppCompatActivity() {
         binding.ivShuffle.setOnClickListener {
 
 
+            binding.vpTop.setCurrentItem((Random().nextInt(alTops.size) ), true)
+            binding.vpJeans.setCurrentItem((Random().nextInt(alJeans.size) ), true)
+
+//            alTops.shuffle(Random())
+//            alJeans.shuffle(Random())
+//
+//            topPagerAdapter.notifyDataSetChanged()
+//            jeansPagerAdapter.notifyDataSetChanged()
+
+
+
+
         }
 
 
 
         binding.vpTop.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageSelected(position: Int) {
-                Log.d("Siddhesh", "Check Top scroll: " + position + " " + binding.vpJeans.currentItem)
+
 
 
                 if (alTops != null && !alTops.isEmpty() && alJeans != null && !alJeans.isEmpty()) {
-                    if (wardrobeViewModel.checkFavCombo(
-                            alTops[position].topId,
-                            alJeans[binding.vpJeans.currentItem].jeansId
-                        )
-                    ) {
+                    if (wardrobeViewModel.checkFavCombo(alTops[position].topId, alJeans[binding.vpJeans.currentItem].jeansId)>0) {
                         binding.ivFav.setImageDrawable(
                             ContextCompat.getDrawable(
                                 this@MainActivity,
-                                R.drawable.ic_selected_fav
+                                com.siddhesh.wardrobe.R.drawable.ic_selected_fav
                             )
                         )
                     } else {
@@ -205,11 +215,7 @@ class MainActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
 
                 if (alTops != null && !alTops.isEmpty() && alJeans != null && !alJeans.isEmpty()) {
-                    if (wardrobeViewModel.checkFavCombo(
-                            alTops[binding.vpTop.currentItem].topId,
-                            alJeans[position].jeansId
-                        )
-                    ) {
+                    if (wardrobeViewModel.checkFavCombo(alTops[binding.vpTop.currentItem].topId, alJeans[position].jeansId)>0) {
                         binding.ivFav.setImageDrawable(
                             ContextCompat.getDrawable(
                                 this@MainActivity,
@@ -237,18 +243,70 @@ class MainActivity : AppCompatActivity() {
             val favouriteModel = FavouriteModel()
             favouriteModel.topId = alTops.get(binding.vpTop.currentItem).topId
             favouriteModel.jeansId = alJeans.get(binding.vpJeans.currentItem).jeansId
+            val builder = AlertDialog.Builder(this)
+
+
+            if (alTops != null && !alTops.isEmpty() && alJeans != null && !alJeans.isEmpty()) {
+                var favId=wardrobeViewModel.checkFavCombo(alTops[binding.vpTop.currentItem].topId, alJeans[binding.vpJeans.currentItem].jeansId)
+
+                if (favId<=0) {
+
+                    builder.setTitle(getString(R.string.add_to_fav_list))
+                    builder.setMessage(getString(R.string.add_to_fav_question))
+
+
+                    builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                        if (wardrobeViewModel.selectFavCombo(favouriteModel)) {
+                            binding.ivFav.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_selected_fav))
+
+                        } else
+                            Toast.makeText(
+                                this,
+                                getString(R.string.combination_already_exist),
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+
+                    }
 
 
 
-            if (wardrobeViewModel.selectFavCombo(favouriteModel)) {
-                binding.ivFav.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_selected_fav))
+                } else {
+                    builder.setTitle(getString(R.string.remove_from_fav))
+                    builder.setMessage(getString(R.string.remove_from_fav_question))
 
-            } else
-                Toast.makeText(
-                    this,
-                    "This Combonation is already exist... \n Choose Different Combination",
-                    Toast.LENGTH_SHORT
-                ).show()
+
+                    builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+
+                        wardrobeViewModel.removeFavCombo(favId)
+                        binding.ivFav.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_unselected_fav))
+
+
+
+
+                    }
+
+                }
+            }
+
+            builder.setNegativeButton(android.R.string.no) { dialog, which ->
+
+                dialog.dismiss()
+            }
+
+            builder.show()
+
+
+
+//            if (wardrobeViewModel.selectFavCombo(favouriteModel)) {
+//                binding.ivFav.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_selected_fav))
+//
+//            } else
+//                Toast.makeText(
+//                    this,
+//                    "This Combonation is already exist... \n Choose Different Combination",
+//                    Toast.LENGTH_SHORT
+//                ).show()
 
 
         }

@@ -2,4 +2,9 @@
     <string name="app_name">Wardrobe</string>
     <string name="you_can_add_top_s_image_by_clicking_here">You Can Add Top\'s image by clicking here</string>
     <string name="you_can_add_jean_s_image_by_clicking_here">You Can Add Jean\'s image by clicking here</string>
+    <string name="add_to_fav_list">Add To Favourite List</string>
+    <string name="add_to_fav_question">Do you want to add Combination as your Favourite List?</string>
+    <string name="remove_from_fav">Remove From Favourite List</string>
+    <string name="remove_from_fav_question">Do you want to remove this Combination from your Favourite List?</string>
+    <string name="combination_already_exist">This Combination is already exist \n Choose Different Combination</string>
 </resources>

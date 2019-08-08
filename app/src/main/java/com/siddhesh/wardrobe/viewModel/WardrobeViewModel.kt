@@ -31,8 +31,12 @@ class WardrobeViewModel(application: Application) : AndroidViewModel(application
 
         return repository.insertFavourite(favouriteModel)
     }
+    fun removeFavCombo(favId:Int) {
 
-    fun checkFavCombo(tId: Int, jId: Int): Boolean {
+         repository.removeFavourite(favId)
+    }
+
+    fun checkFavCombo(tId: Int, jId: Int): Int {
 
         return repository.checkFavCombo(tId, jId)
     }

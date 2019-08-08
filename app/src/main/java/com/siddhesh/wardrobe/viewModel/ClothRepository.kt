@@ -1,6 +1,5 @@
 package com.siddhesh.wardrobe.viewModel
 
-import android.util.Log
 import com.siddhesh.wardrobe.model.FavouriteModel
 import com.siddhesh.wardrobe.model.JeansModel
 import com.siddhesh.wardrobe.model.TopModel
@@ -24,39 +23,46 @@ class ClothRepository(private var daoAccess: DaoAccess) {
     }
 
     fun insertFavourite(favouriteModel: FavouriteModel): Boolean {
-        Log.d("Siddhesh","check insertFavourite: "+favouriteModel)
-        if(daoAccess.checkFavCombo(favouriteModel.topId, favouriteModel.jeansId)==0){
+
+        if (daoAccess.checkFavCombo(favouriteModel.topId, favouriteModel.jeansId) == 0) {
             daoAccess.insertFav(favouriteModel)
             return true
-        }else
+        } else
             return false
 
     }
 
-    fun checkFavCombo(tId: Int , jId:Int): Boolean {
+    fun removeFavourite(favId: Int) {
+        daoAccess.deleteFavCombo(favId)
 
-        if(daoAccess.checkFavCombo(tId, jId)>0){
-            return true
-        }else
-        {
-            return false
-        }
+
+    }
+
+    fun checkFavCombo(tId: Int, jId: Int): Int {
+
+        return daoAccess.checkFavCombo(tId, jId)
+//        if(daoAccess.checkFavCombo(tId, jId)>0){
+//            return true
+//        }else
+//        {
+//            return false
+//        }
 
 
     }
 
 
-    fun getAllTops() : ArrayList<TopModel> {
+    fun getAllTops(): ArrayList<TopModel> {
         alTop = daoAccess.fetchAllTops() as ArrayList<TopModel>
 
         return alTop
 
     }
 
-    fun getAllJeans() : ArrayList<JeansModel>{
+    fun getAllJeans(): ArrayList<JeansModel> {
         alJeans = daoAccess.fetchAllJeans() as ArrayList<JeansModel>
 
-        return  alJeans
+        return alJeans
 
     }
 
