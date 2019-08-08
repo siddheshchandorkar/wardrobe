@@ -30,5 +30,8 @@ interface DaoAccess {
     @Query("SELECT * FROM favourite ")
     fun fetchAllFavourite(): List<FavouriteModel>
 
+    @Query("SELECT COUNT(*) FROM favourite WHERE t_id =:tId AND j_id=:jId ")
+    fun checkFavCombo(tId: Int, jId: Int): Int
+
 
 }

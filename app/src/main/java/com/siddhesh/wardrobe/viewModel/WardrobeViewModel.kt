@@ -27,8 +27,9 @@ class WardrobeViewModel(application: Application) : AndroidViewModel(application
         repository.insertJeans(jeansModel)
     }
 
-    fun selectFavCombo(favouriteModel: FavouriteModel) {
-        repository.insertFavourite(favouriteModel)
+    fun selectFavCombo(favouriteModel: FavouriteModel) :Boolean{
+
+       return repository.insertFavourite(favouriteModel)
     }
 
     fun getTops(): ArrayList<TopModel> {

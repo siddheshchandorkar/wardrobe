@@ -3,12 +3,12 @@ package com.siddhesh.wardrobe.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.telephony.AccessNetworkConstants
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.viewpager.widget.ViewPager
 import com.siddhesh.wardrobe.R
 import com.siddhesh.wardrobe.model.FavouriteModel
 import com.siddhesh.wardrobe.model.JeansModel
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         } else
             binding.tvJeansMsg.visibility = View.GONE
 
-        Log.d("Siddhesh", "Init fav: "+alFavCombo)
+        Log.d("Siddhesh", "Init fav: " + alFavCombo)
 
         topPagerAdapter = ViewPagerAdapter(this, alTops, 0)
 
@@ -77,6 +77,8 @@ class MainActivity : AppCompatActivity() {
         jeansPagerAdapter = ViewPagerAdapter(this, alJeans, 1)
 
         binding.vpJeans.adapter = jeansPagerAdapter
+        binding.vpJeans.setPageTransformer(true, PageTransformer())
+
         jeansPagerAdapter.notifyDataSetChanged()
 
 
@@ -91,13 +93,67 @@ class MainActivity : AppCompatActivity() {
             onSelectImageClick()
         }
 
+        binding.ivLeftTop.setOnClickListener {
+            if(binding.vpTop.currentItem>0){
+                binding.vpTop.setCurrentItem(binding.vpTop.currentItem-1, true)
+            }
 
+
+
+        }
+        binding.ivRightTop.setOnClickListener {
+
+
+
+        }
+        binding.ivLeftJeans.setOnClickListener {
+
+
+
+        }
+        binding.ivRightJeans.setOnClickListener {
+
+
+
+        }
+
+
+
+        binding.vpTop.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageSelected(position: Int) {
+                Log.d("Siddhesh", "Check Top scroll: " + position + " " + binding.vpJeans.currentItem)
+
+            }
+
+            override fun onPageScrolled(pos: Int, arg1: Float, arg2: Int) {}
+
+            override fun onPageScrollStateChanged(pos: Int) {}
+        })
+        binding.vpJeans.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageSelected(position: Int) {
+                Log.d("Siddhesh", "Check Jeans scroll: " + position + " " + binding.vpTop.currentItem)
+
+            }
+
+            override fun onPageScrolled(pos: Int, arg1: Float, arg2: Int) {}
+
+            override fun onPageScrollStateChanged(pos: Int) {}
+        })
         binding.ivFav.setOnClickListener {
-            var favouriteModel= FavouriteModel()
-            favouriteModel.topId =alTops.get(binding.vpTop.currentItem).topId
-            favouriteModel.jeansId =alJeans.get(binding.vpTop.currentItem).jeansId
+            val favouriteModel = FavouriteModel()
+            favouriteModel.topId = alTops.get(binding.vpTop.currentItem).topId
+            favouriteModel.jeansId = alJeans.get(binding.vpTop.currentItem).jeansId
 
-            wardrobeViewModel.selectFavCombo(favouriteModel)
+
+
+            if (wardrobeViewModel.selectFavCombo(favouriteModel)) {
+
+            } else
+                Toast.makeText(
+                    this,
+                    "This Combonation is already exist... \n Choose Different Combination",
+                    Toast.LENGTH_SHORT
+                ).show()
 
 
         }
@@ -128,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                     .show()
 
                 if (clothType) {
-                    var topModel = TopModel()
+                    val topModel = TopModel()
                     topModel.image_path = result.uri.toString()
 
                     wardrobeViewModel.addTop(topModel)
@@ -143,9 +199,8 @@ class MainActivity : AppCompatActivity() {
                         binding.tvTopMsg.visibility = View.GONE
 
 
-
                 } else {
-                    var jeansModel = JeansModel()
+                    val jeansModel = JeansModel()
                     jeansModel.image_path = result.uri.toString()
 
                     wardrobeViewModel.addJeans(jeansModel)
@@ -157,7 +212,6 @@ class MainActivity : AppCompatActivity() {
                         binding.tvJeansMsg.visibility = View.VISIBLE
                     } else
                         binding.tvJeansMsg.visibility = View.GONE
-
 
 
                 }

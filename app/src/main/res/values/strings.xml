@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Wardrobe</string>
+    <string name="you_can_add_top_s_image_by_clicking_here">You Can Add Top\'s image by clicking here</string>
+    <string name="you_can_add_jean_s_image_by_clicking_here">You Can Add Jean\'s image by clicking here</string>
 </resources>

@@ -22,10 +22,15 @@ class ClothRepository(private var daoAccess: DaoAccess) {
 
     }
 
-    fun insertFavourite(favouriteModel: FavouriteModel) {
-        daoAccess.insertFav(favouriteModel)
+    fun insertFavourite(favouriteModel: FavouriteModel): Boolean {
+        if(daoAccess.checkFavCombo(favouriteModel.topId, favouriteModel.jeansId)>0){
+            daoAccess.insertFav(favouriteModel)
+            return true
+        }else
+            return false
 
     }
+
 
     fun getAllTops() : ArrayList<TopModel> {
         alTop = daoAccess.fetchAllTops() as ArrayList<TopModel>
